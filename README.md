@@ -77,22 +77,18 @@ Typescript doesn't allow inference by partial strings
 `Not` works mainly on primitive types, e.g. `AsTyped<{not: {type: 'string'}}>` will resolve to `number | object | any[] | boolean`
 
 ### oneOf
-`AsTyped<{oneOf: [{type: 'string'}, {type: 'number'}]}>` === `string | number`
+* `AsTyped<{oneOf: [{type: 'string'}, {type: 'number'}]}>` === `string | number`
+
+Currently doesn't work.
 
 ### allOf
-`AsTyped<{allOf: [{type: 'object', properties: {a: {type: 'number'}}}, {type: 'object', properties: {b: {type: 'string'}}}]}>` === `{a?: number, b?: string}`
+* `AsTyped<{allOf: [{type: 'object', properties: {a: {type: 'number'}}}, {type: 'object', properties: {b: {type: 'string'}}}]}>` === `{a?: number, b?: string}`
 
 ### anyOf
-`AsTyped<{allOf: [{type: 'object', properties: {a: {type: 'number'}}}, {type: 'object', properties: {b: {type: 'string'}}, required: ['b']}]}>` === `{a?: number, b: string} | {a?: number} | {b: string}`
-
-#### Limitations
-`anyOf` creates all the possible allOf/oneOf combinations of its items. For n items, it will have 2ⁿ - 1 possible typescript types. 
-`anyOf` works great for 2-3 items, but for e.g. 8 items it will create 255 different type combinations. In this case, it's better to use `allOf`/`oneOf` and better craft the schema.
-Due to typescript limitations in variadic features, the limitation of `anyOf` items is hard-coded, currently to 6.
-[Typescript issue 5453](https://github.com/Microsoft/TypeScript/issues/5453)
+* `AsTyped<{allOf: [{type: 'object', properties: {a: {type: 'number'}}}, {type: 'object', properties: {b: {type: 'string'}}, required: ['b']}]}>` === `{a?: number, b: string} | {a?: number} | {b: string}`
 
 ### If/Then/Else
-`AsTyped<{If: {type: 'object', properties: {a: {type: 'number'}}}, Then: {type: 'object', properties: {b: {type: 'string'}}}, Else: {type: 'object', properties: {c: {type: 'array', items: {type: 'string'}}}}}>`
+* `AsTyped<{If: {type: 'object', properties: {a: {type: 'number'}}}, Then: {type: 'object', properties: {b: {type: 'string'}}}, Else: {type: 'object', properties: {c: {type: 'array', items: {type: 'string'}}}}}>`
  === `{a?: string, b?: string} | {c: string[]}`
 
  #### Limitations/Comments

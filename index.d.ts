@@ -50,6 +50,7 @@ declare namespace AsTypedInternal {
     }
     type BoolSchema = SchemaDeclaration<boolean>
     type NullSchema = SchemaDeclaration<null>
+    type LeafSchema = NumberSchema | StringSchema | BoolSchema | NullSchema
 
     type ObjectSchema<Props, ReqProps, AdditionalProps extends SchemaBase|null = null> = SchemaDeclaration<{}> & {
         required?: ReqProps[]
@@ -95,35 +96,35 @@ declare namespace AsTypedInternal {
                                     RequiredPropNames, 
                                     SchemaForAdditionalProperties extends SchemaBase> =
                                     
-        (RequiredPropNames extends string ? {[name in RequiredPropNames]: name extends keyof Props ? AsTypedRecursive<Props[name]> : never} : unknown) &
-        (Props extends null ? unknown : {[optKey in keyof Props]?: AsTypedRecursive<Props[optKey]>}) & 
-        ((SchemaForAdditionalProperties extends null ? unknown : {[key: string]: AsTypedRecursive<SchemaForAdditionalProperties>}))
+        (RequiredPropNames extends string ? {[name in RequiredPropNames]: name extends keyof Props ? ResolveRecursive<Props[name]> : never} : unknown) &
+        (Props extends null ? unknown : {[optKey in keyof Props]?: ResolveRecursive<Props[optKey]>}) & 
+        ((SchemaForAdditionalProperties extends null ? unknown : {[key: string]: ResolveRecursive<SchemaForAdditionalProperties>}))
                                          
 
-    interface ArraySchemaToTyped<ValueType> extends Array<AsTypedRecursive<ValueType>> {}
+    interface ArraySchemaToTyped<ValueType> extends Array<ResolveRecursive<ValueType>> {}
     
     type AsTypedTupleSchema<Tuple> = 
-        Tuple extends [infer A, infer B] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>] : 
-        Tuple extends [infer A, infer B, infer C] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>] : 
-        Tuple extends [infer A, infer B, infer C, infer D] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, AsTypedRecursiveInternal<G>] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, AsTypedRecursiveInternal<G>, AsTypedRecursiveInternal<H>] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H, infer I] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, AsTypedRecursiveInternal<G>, AsTypedRecursiveInternal<H>, AsTypedRecursiveInternal<I>] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H, infer I, infer J] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, AsTypedRecursiveInternal<G>, AsTypedRecursiveInternal<H>, AsTypedRecursiveInternal<I>, AsTypedRecursiveInternal<J>] : 
+        Tuple extends [infer A, infer B] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>] : 
+        Tuple extends [infer A, infer B, infer C] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>] : 
+        Tuple extends [infer A, infer B, infer C, infer D] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ResolveRecursiveInternal<G>] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ResolveRecursiveInternal<G>, ResolveRecursiveInternal<H>] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H, infer I] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ResolveRecursiveInternal<G>, ResolveRecursiveInternal<H>, ResolveRecursiveInternal<I>] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H, infer I, infer J] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ResolveRecursiveInternal<G>, ResolveRecursiveInternal<H>, ResolveRecursiveInternal<I>, ResolveRecursiveInternal<J>] : 
         never 
 
     type AsTypedTupleSchemaWithAdditional<Tuple, Additional> =
-        Tuple extends [infer A, infer B] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, ...(AsTypedRecursiveInternal<Additional>[])] :
-        Tuple extends [infer A, infer B, infer C] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, ...(AsTypedRecursiveInternal<Additional>[])] : 
-        Tuple extends [infer A, infer B, infer C, infer D] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, ...(AsTypedRecursiveInternal<Additional>[])] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, ...(AsTypedRecursiveInternal<Additional>[])] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, ...(AsTypedRecursiveInternal<Additional>[])] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, AsTypedRecursiveInternal<G>, ...(AsTypedRecursiveInternal<Additional>[])] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, AsTypedRecursiveInternal<G>, AsTypedRecursiveInternal<H>, ...(AsTypedRecursiveInternal<Additional>[])] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H, infer I] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, AsTypedRecursiveInternal<G>, AsTypedRecursiveInternal<H>, AsTypedRecursiveInternal<I>, ...(AsTypedRecursiveInternal<Additional>[])] : 
-        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H, infer I, infer J] ? [AsTypedRecursiveInternal<A>, AsTypedRecursiveInternal<B>, AsTypedRecursiveInternal<C>, AsTypedRecursiveInternal<D>, AsTypedRecursiveInternal<E>, AsTypedRecursiveInternal<F>, AsTypedRecursiveInternal<G>, AsTypedRecursiveInternal<H>, AsTypedRecursiveInternal<I>, AsTypedRecursiveInternal<J>, ...(AsTypedRecursiveInternal<Additional>[])] : 
+        Tuple extends [infer A, infer B] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ...(ResolveRecursiveInternal<Additional>[])] :
+        Tuple extends [infer A, infer B, infer C] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ...(ResolveRecursiveInternal<Additional>[])] : 
+        Tuple extends [infer A, infer B, infer C, infer D] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ...(ResolveRecursiveInternal<Additional>[])] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ...(ResolveRecursiveInternal<Additional>[])] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ...(ResolveRecursiveInternal<Additional>[])] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ResolveRecursiveInternal<G>, ...(ResolveRecursiveInternal<Additional>[])] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ResolveRecursiveInternal<G>, ResolveRecursiveInternal<H>, ...(ResolveRecursiveInternal<Additional>[])] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H, infer I] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ResolveRecursiveInternal<G>, ResolveRecursiveInternal<H>, ResolveRecursiveInternal<I>, ...(ResolveRecursiveInternal<Additional>[])] : 
+        Tuple extends [infer A, infer B, infer C, infer D, infer E, infer F, infer G, infer H, infer I, infer J] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>, ResolveRecursiveInternal<E>, ResolveRecursiveInternal<F>, ResolveRecursiveInternal<G>, ResolveRecursiveInternal<H>, ResolveRecursiveInternal<I>, ResolveRecursiveInternal<J>, ...(ResolveRecursiveInternal<Additional>[])] : 
         never
 
     // This is very crude
@@ -136,7 +137,7 @@ declare namespace AsTypedInternal {
         (ValueType extends ArraySchemaBase ? never : any[]) | 
         (ValueType extends BoolSchema ? never : boolean)
 
-    type AsTypedRecursiveInternal<SchemaType> =
+    type ResolveRecursiveInternal<SchemaType> =
         SchemaType extends SchemaDeclaration<null> ? null :
         SchemaType extends StringEnum<infer PossibleValues> ? PossibleValues :
         SchemaType extends NumberEnum<infer PossibleValues> ? PossibleValues :
@@ -149,31 +150,21 @@ declare namespace AsTypedInternal {
         SchemaType extends SchemaDeclaration<typeof undefined> ? undefined :
         never
 
-    type AsTypedRecursive<SchemaType> =
-        SchemaType extends SchemaDeclaration<null> ? null :
-        SchemaType extends CombinerSchema<infer ValueType, infer Operator> ? ResolveCombiner<ValueType, Operator>:
+    // TODO
+    type ResolveOneOf<InnerSchema> = InnerSchema
+
+    
+    // High order resolution changes the schema before resolving it to typed
+    type ResolveHighOrder<SchemaToResolve extends SchemaBase> =
+        SchemaToResolve extends IfThenElseSchema<infer If, infer Then, infer Else> ? ResolveOneOf<(If & Then) | Else> :
+        SchemaToResolve extends OneOf<infer Inner> ? ResolveOneOf<Inner> :
+        SchemaToResolve extends AllOf<infer Inner> ? UnionToIntersection<Inner> :
+        SchemaToResolve extends AnyOf<infer Inner> ? Inner :
+        SchemaToResolve
+
+    type ResolveRecursive<SchemaType> =
         SchemaType extends TupleSchema<infer TupleType, infer Additional> ? (Additional extends null ? AsTypedTupleSchema<TupleType> : AsTypedTupleSchemaWithAdditional<TupleType, Additional>) :
-        SchemaType extends IfThenElseSchema<infer If, infer Then, infer Else> ? ((AsTypedRecursiveInternal<If> & AsTypedRecursiveInternal<Then>) | AsTypedRecursiveInternal<Else>) :
-        AsTypedRecursiveInternal<SchemaType>
-
-
-    type ResolveAnyOf2<A, B> = AsTypedRecursiveInternal<A> | AsTypedRecursiveInternal<B> | (AsTypedRecursiveInternal<A> & AsTypedRecursiveInternal<B>)
-    type ResolveAnyOf3<A, B, C> = ResolveAnyOf2<A, B> | C | (ResolveAnyOf2<A, B> & C)
-    type ResolveAnyOf4<A, B, C, D> = ResolveAnyOf3<A, B, C> | D | (ResolveAnyOf3<A, B, C> & C)
-    type ResolveAnyOf5<A, B, C, D, E> = ResolveAnyOf4<A, B, C, D> | E | (ResolveAnyOf4<A, B, C, D> & E)
-    type ResolveAnyOf6<A, B, C, D, E, F> = ResolveAnyOf5<A, B, C, D, E> | F | (ResolveAnyOf5<A, B, C, D, E> & F)
-
-    type ResolveAnyOf<ValueType> = 
-        ValueType extends [infer A, infer B] ? ResolveAnyOf2<A, B> :
-        ValueType extends [infer A, infer B, infer C] ? ResolveAnyOf3<A, B, C> :
-        ValueType
-
-    type ResolveCombiner<ValueType, Operator> =
-        Operator extends 'allOf' ? AsTypedRecursiveInternal<UnionToIntersection<ValueType>> :
-        Operator extends 'oneOf' ? AsTypedRecursiveInternal<ValueType> :
-        Operator extends 'anyOf' ? ResolveAnyOf<ValueType> :
-        never
-
+        ResolveRecursiveInternal<ResolveHighOrder<SchemaType>>
 
     type MapPropsToRefs<Props, Definitions extends DefinitionsBase> =    
         Definitions extends {[name: string]: SchemaBase} ? {[name in keyof Props]: ResolveRefs<Props[name], Definitions>} : never
@@ -210,9 +201,9 @@ declare namespace AsTypedInternal {
         SchemaToResolve extends IfThenElseSchema<infer If, infer Then, infer Else> ? ResolveIfThenElseRefs<SchemaToResolve, If, Then, Else, Definitions> :
             SchemaToResolve
 
-
     type ResolveDefinitionsForSchema<Schema> = Schema extends SchemaWithDefinitions<infer D> ? ResolveDefinitions<ExtractDefinitionsById<D>> : null
-    export type AsTyped<Schema> = AsTypedRecursive<ResolveRefs<Schema, ResolveDefinitionsForSchema<Schema>>>
+
+    export type AsTyped<RootSchema> = ResolveRecursive<ResolveRefs<RootSchema, ResolveDefinitionsForSchema<RootSchema>>>
 }
 
 export type AsTyped<Schema> = AsTypedInternal.AsTyped<Schema>

@@ -35,3 +35,6 @@ const MissingReqProps: AsTyped<{type: 'object', properties: {a: {type: 'number'}
 const not2: AsTyped<{not: {type: 'number'}}> = 1 // anything but number
 const oneOfBad: AsTyped<{oneOf: [{type: 'string'}, {type: 'number'}]}> = {} // string|number
 const oneOfObjectBad: AsTyped<{oneOf: [{type: 'string'}, {type: 'object', properties: {a: {type: 'number'}}}]}> = {a: '123'} // string | {a: number}
+
+// TODO: make this invalid
+const oneOfWithAllOf: AsTyped<{oneOf: [{type: 'object', properties: {a: {type: 'string'}}}, {type: 'object', properties: {b: {type: 'number'}}}]}> = {a: '123', b: 3} // string|number
