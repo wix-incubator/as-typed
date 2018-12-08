@@ -56,7 +56,7 @@ The following is a table of how JSON schema types translate to Typescript types 
 
 #### Limitations
 Due to typescript's missing variadic features, the max number of items in a tuple needs to be hardcoded, currently to 10.
-[Typescript issue 5453][https://github.com/Microsoft/TypeScript/issues/5453]
+[Typescript issue 5453](https://github.com/Microsoft/TypeScript/issues/5453)
 
 ### Tuple with additional items
 * `AsTyped<{type: 'array', items: [{type: 'string'}, {type: 'number'}], additionalItems: {type: 'string'}}}>` === `[string, number, ...string[]]`
@@ -71,7 +71,7 @@ Due to typescript's missing variadic features, the max number of items in a tupl
 #### Limitations
 Reference by URL ('#/definitions/foo', 'other.json/foo') are not supported.
 Typescript doesn't allow inference by partial strings
-[Typescript Issue 12754][https://github.com/Microsoft/TypeScript/issues/12754]
+[Typescript Issue 12754](https://github.com/Microsoft/TypeScript/issues/12754)
 
 ### not
 `Not` works mainly on primitive types, e.g. `AsTyped<{not: {type: 'string'}}>` will resolve to `number | object | any[] | boolean`
@@ -89,7 +89,7 @@ Typescript doesn't allow inference by partial strings
 `anyOf` creates all the possible allOf/oneOf combinations of its items. For n items, it will have 2ⁿ - 1 possible typescript types. 
 `anyOf` works great for 2-3 items, but for e.g. 8 items it will create 255 different type combinations. In this case, it's better to use `allOf`/`oneOf` and better craft the schema.
 Due to typescript limitations in variadic features, the limitation of `anyOf` items is hard-coded, currently to 6.
-[Typescript issue 5453][https://github.com/Microsoft/TypeScript/issues/5453]
+[Typescript issue 5453](https://github.com/Microsoft/TypeScript/issues/5453)
 
 ### If/Then/Else
 `AsTyped<{If: {type: 'object', properties: {a: {type: 'number'}}}, Then: {type: 'object', properties: {b: {type: 'string'}}}, Else: {type: 'object', properties: {c: {type: 'array', items: {type: 'string'}}}}}>`
