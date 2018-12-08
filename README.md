@@ -30,7 +30,7 @@ The following is a table of how JSON schema types translate to Typescript types 
 #### Limitations
 * Patterns are not supported. 
   There is no regex validation in typescript
-  [Typescript issue 6579][https://github.com/Microsoft/TypeScript/issues/6579]
+  [Typescript issue 6579](https://github.com/Microsoft/TypeScript/issues/6579)
 
 * Value validation (min, max etc) is not supported
   Typescript is not meant for value checking (at least currently).
