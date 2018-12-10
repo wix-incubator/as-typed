@@ -3,7 +3,6 @@ declare namespace AsTypedInternal {
         $id?: string
         $ref?: string
         type?: string
-        const?: any
         title?: string
         description?: string
         default?: any
@@ -34,20 +33,29 @@ declare namespace AsTypedInternal {
 
     type UndefinedSchema = SchemaDeclaration<undefined>
 
-    type NumberSchema = SchemaDeclaration<number>
-    type StringSchema = SchemaDeclaration<string> & {
-        pattern?: RegExp
-        maxLength?: number
-        minLength?: number
-    }
-    type StringEnum<PossibleValue extends string> = EnumSchema<StringSchema, PossibleValue>
-    type NumberEnum<PossibleValue extends number> = EnumSchema<NumberSchema, PossibleValue> & {
+    type NumberSchema = SchemaDeclaration<number>& {
         multipleOf?: number
         minimun?: number
         exclusiveMinimum?: number
         maximum?: number
         exclusiveMaximum?: number
     }
+    type StringSchema = SchemaDeclaration<string> & {
+        pattern?: RegExp
+        maxLength?: number
+        minLength?: number
+    }
+
+    type ConstSchema<ConstType> = {
+            const?: ConstType,
+            enum?: ConstType[]
+    } & (   ConstType extends number ? NumberSchema :
+            ConstType extends string ? StringSchema :
+            ConstType extends boolean ? BoolSchema :
+            never
+        )
+
+    
     type BoolSchema = SchemaDeclaration<boolean>
     type NullSchema = SchemaDeclaration<null>
     type LeafSchema = NumberSchema | StringSchema | BoolSchema | NullSchema
@@ -139,8 +147,7 @@ declare namespace AsTypedInternal {
 
     type ResolveRecursiveInternal<SchemaType> =
         SchemaType extends SchemaDeclaration<null> ? null :
-        SchemaType extends StringEnum<infer PossibleValues> ? PossibleValues :
-        SchemaType extends NumberEnum<infer PossibleValues> ? PossibleValues :
+        SchemaType extends ConstSchema<infer Value> ? Value :
         SchemaType extends SchemaDeclaration<string> ? string :
         SchemaType extends SchemaDeclaration<boolean> ? boolean :
         SchemaType extends SchemaDeclaration<number> ? number :
@@ -153,7 +160,6 @@ declare namespace AsTypedInternal {
     // TODO
     type ResolveOneOf<InnerSchema> = InnerSchema
 
-    
     // High order resolution changes the schema before resolving it to typed
     type ResolveHighOrder<SchemaToResolve extends SchemaBase> =
         SchemaToResolve extends IfThenElseSchema<infer If, infer Then, infer Else> ? ResolveOneOf<(If & Then) | Else> :

@@ -80,6 +80,7 @@ Typescript doesn't allow inference by partial strings
 * `AsTyped<{oneOf: [{type: 'string'}, {type: 'number'}]}>` === `string | number`
 
 Currently doesn't work.
+See [Typescript issue 20863](https://github.com/Microsoft/TypeScript/issues/20863)
 
 ### allOf
 * `AsTyped<{allOf: [{type: 'object', properties: {a: {type: 'number'}}}, {type: 'object', properties: {b: {type: 'string'}}}]}>` === `{a?: number, b?: string}`
@@ -88,8 +89,6 @@ Currently doesn't work.
 * `AsTyped<{allOf: [{type: 'object', properties: {a: {type: 'number'}}}, {type: 'object', properties: {b: {type: 'string'}}, required: ['b']}]}>` === `{a?: number, b: string} | {a?: number} | {b: string}`
 
 ### If/Then/Else
-* `AsTyped<{If: {type: 'object', properties: {a: {type: 'number'}}}, Then: {type: 'object', properties: {b: {type: 'string'}}}, Else: {type: 'object', properties: {c: {type: 'array', items: {type: 'string'}}}}}>`
- === `{a?: string, b?: string} | {c: string[]}`
-
- #### Limitations/Comments
 `If/Then/Else` acts exactly like `{oneOf: [{allOf: [If, Then]}, Else]}`. It's strange to have this sugar in the schema which doesn't reduce the verbosity.
+Currently doesn't work, for the same reasons as oneOf
+See [Typescript issue 20863](https://github.com/Microsoft/TypeScript/issues/20863)
