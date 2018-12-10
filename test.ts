@@ -43,6 +43,3 @@ const withConstBad: AsTyped<{type: 'string', const: '123'}> = '789'
 // TODO: Should be invalid but currently pass
 const oneOfWithAllOf: AsTyped<{oneOf: [{type: 'object', properties: {a: {type: 'string'}}}, {type: 'object', properties: {b: {type: 'number'}}}]}> = {a: '123', b: 3} // string|number
 const IfThenElseBad: AsTyped<{If: {type: 'object', properties: {a: {type: 'number'}}}, Then: {type: 'object', properties: {b: {type: 'string'}}}, Else: {type: 'object', properties: {c: {type: 'array', items: {type: 'string'}}}}}> = {a: '1', b: '2', c:['3']}
-
-// TODO: should be valid but currently invalid
-const notBad2: AsTyped<{not: {type: 'object', properties: {a: {type: 'string'}}}}> = {a: 3}

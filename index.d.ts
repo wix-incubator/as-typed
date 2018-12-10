@@ -69,7 +69,6 @@ declare namespace AsTypedInternal {
         patternProperties?: {[name: string]: SchemaBase}
         dependencies?: {[name: string]: SchemaBase | SchemaBase[]}
         propertyNames?: StringSchema
-
     }
 
     type CombinerSchema<ValueType extends SchemaBase, Operator extends string> = {[operator in Operator] : ValueType[]}
@@ -93,25 +92,21 @@ declare namespace AsTypedInternal {
         contains?: SchemaBase
     }
     type ArraySchema<ValueSchema> = ArraySchemaBase & {items: ValueSchema extends any[] ? never : ValueSchema}
-
     type TupleSchema<TupleAsArray extends any[], AdditionalItemsSchema = null> = ArraySchemaBase & {
         items: TupleAsArray
         additionalItems?: AdditionalItemsSchema
     }
 
-    type ObjectSchemaToTypedObject<ObjectSchemaType extends ObjectSchema<Props, RequiredPropNames, SchemaForAdditionalProperties>, 
-                                    Props,
-                                    RequiredPropNames, 
-                                    SchemaForAdditionalProperties extends SchemaBase> =
-                                    
-        (RequiredPropNames extends string ? {[name in RequiredPropNames]: name extends keyof Props ? ResolveRecursive<Props[name]> : never} : unknown) &
-        (Props extends null ? unknown : {[optKey in keyof Props]?: ResolveRecursive<Props[optKey]>}) & 
-        ((SchemaForAdditionalProperties extends null ? unknown : {[key: string]: ResolveRecursive<SchemaForAdditionalProperties>}))
-                                         
+    type ResolveObjectRequiredProps<Props, RequiredPropNames> = RequiredPropNames extends string ? {[name in RequiredPropNames]: name extends keyof Props ? ResolveRecursive<Props[name]> : never} : unknown
+    type ResolveObjectOptionalProps<Props> =Props extends null ? unknown : {[optKey in keyof Props]?: ResolveRecursive<Props[optKey]>}
+    type ResolveObjectAdditionalProps<AdditionalPropsSchema> = AdditionalPropsSchema extends null ? unknown : {[key: string]: ResolveRecursive<AdditionalPropsSchema>}
+    type ResolveObject<ObjectSchemaType extends ObjectSchema<Props, RequiredPropNames, SchemaForAdditionalProperties>, Props, RequiredPropNames, SchemaForAdditionalProperties extends SchemaBase> =                                    
+        ResolveObjectRequiredProps<Props, RequiredPropNames> & ResolveObjectOptionalProps<Props> & ResolveObjectAdditionalProps<SchemaForAdditionalProperties>                                         
 
-    interface ArraySchemaToTyped<ValueType> extends Array<ResolveRecursive<ValueType>> {}
+    interface ResolveArray<ValueType> extends Array<ResolveRecursive<ValueType>> {}
     
-    type AsTypedTupleSchema<Tuple> = 
+    // TODO: find a variadic way to do this, not sure it's possible with current typescript. https://github.com/Microsoft/TypeScript/issues/5453
+   type AsTypedTupleSchema<Tuple> = 
         Tuple extends [infer A, infer B] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>] : 
         Tuple extends [infer A, infer B, infer C] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>] : 
         Tuple extends [infer A, infer B, infer C, infer D] ? [ResolveRecursiveInternal<A>, ResolveRecursiveInternal<B>, ResolveRecursiveInternal<C>, ResolveRecursiveInternal<D>] : 
@@ -137,12 +132,12 @@ declare namespace AsTypedInternal {
 
     // This is very crude
     type ResolveNot<ValueType> = 
+        // TODO: allow Not() for array/object types of specific schemas. Not easy.
+        object | any[] | 
         (ValueType extends NullSchema ? never : null) | 
         (ValueType extends NumberSchema ? never : number) | 
         (ValueType extends UndefinedSchema ? never : undefined) | 
         (ValueType extends StringSchema ? never : string) | 
-        (ValueType extends ObjectSchema<infer Props, infer Required, infer Additional> ? never : object) | 
-        (ValueType extends ArraySchemaBase ? never : any[]) | 
         (ValueType extends BoolSchema ? never : boolean)
 
     type ResolveRecursiveInternal<SchemaType> =
@@ -152,8 +147,8 @@ declare namespace AsTypedInternal {
         SchemaType extends SchemaDeclaration<boolean> ? boolean :
         SchemaType extends SchemaDeclaration<number> ? number :
         SchemaType extends Not<infer T> ? ResolveNot<T> :
-        SchemaType extends ObjectSchema<infer Props, infer Required, infer Additional> ? ObjectSchemaToTypedObject<SchemaType, Props, Required, Additional> :
-        SchemaType extends ArraySchema<infer ValueType> ? ArraySchemaToTyped<ValueType> :
+        SchemaType extends ObjectSchema<infer Props, infer Required, infer Additional> ? ResolveObject<SchemaType, Props, Required, Additional> :
+        SchemaType extends ArraySchema<infer ValueType> ? ResolveArray<ValueType> :
         SchemaType extends SchemaDeclaration<typeof undefined> ? undefined :
         never
 
@@ -162,7 +157,7 @@ declare namespace AsTypedInternal {
 
     // High order resolution changes the schema before resolving it to typed
     type ResolveHighOrder<SchemaToResolve extends SchemaBase> =
-        SchemaToResolve extends IfThenElseSchema<infer If, infer Then, infer Else> ? ResolveOneOf<(If & Then) | Else> :
+        SchemaToResolve extends IfThenElseSchema<infer If, infer Then, infer Else> ? (If & Then) | Else :
         SchemaToResolve extends OneOf<infer Inner> ? ResolveOneOf<Inner> :
         SchemaToResolve extends AllOf<infer Inner> ? UnionToIntersection<Inner> :
         SchemaToResolve extends AnyOf<infer Inner> ? Inner :
@@ -207,9 +202,10 @@ declare namespace AsTypedInternal {
         SchemaToResolve extends IfThenElseSchema<infer If, infer Then, infer Else> ? ResolveIfThenElseRefs<SchemaToResolve, If, Then, Else, Definitions> :
             SchemaToResolve
 
-    type ResolveDefinitionsForSchema<Schema> = Schema extends SchemaWithDefinitions<infer D> ? ResolveDefinitions<ExtractDefinitionsById<D>> : null
+    type ResolveRootSchemaDefinitions<Schema> = Schema extends SchemaWithDefinitions<infer D> ? ResolveDefinitions<ExtractDefinitionsById<D>> : null
+    type ResolveRefsForRootSchema<RootSchema> = ResolveRefs<RootSchema, ResolveRootSchemaDefinitions<RootSchema>>
 
-    export type AsTyped<RootSchema> = ResolveRecursive<ResolveRefs<RootSchema, ResolveDefinitionsForSchema<RootSchema>>>
+    export type ResolveRootSchema<RootSchema> = ResolveRecursive<ResolveRefsForRootSchema<RootSchema>>
 }
 
-export type AsTyped<Schema> = AsTypedInternal.AsTyped<Schema>
+export type AsTyped<Schema> = AsTypedInternal.ResolveRootSchema<Schema>

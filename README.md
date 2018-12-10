@@ -79,7 +79,7 @@ Typescript doesn't allow inference by partial strings
 ### oneOf
 * `AsTyped<{oneOf: [{type: 'string'}, {type: 'number'}]}>` === `string | number`
 
-Currently doesn't work.
+Currently doesn't work as expected, and resolves the same as anyOf.
 See [Typescript issue 20863](https://github.com/Microsoft/TypeScript/issues/20863)
 
 ### allOf
@@ -90,5 +90,5 @@ See [Typescript issue 20863](https://github.com/Microsoft/TypeScript/issues/2086
 
 ### If/Then/Else
 `If/Then/Else` acts exactly like `{oneOf: [{allOf: [If, Then]}, Else]}`. It's strange to have this sugar in the schema which doesn't reduce the verbosity.
-Currently doesn't work, for the same reasons as oneOf
+Currently doesn't work as expected, for the same reasons as oneOf. Resolves to `(If & Then) | Else`, which is not an accurate translation.
 See [Typescript issue 20863](https://github.com/Microsoft/TypeScript/issues/20863)
