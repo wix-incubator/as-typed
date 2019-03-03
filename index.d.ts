@@ -6,7 +6,7 @@ declare namespace AsTypedInternal {
         title?: string
         description?: string
         default?: any
-        exmamples?: any[]
+        examples?: any[]
     }
     type DefinitionsBase = {[name: string]: SchemaBase}
     type SchemaWithDefinitions<SchemaDefinitions extends DefinitionsBase> = SchemaBase & {
