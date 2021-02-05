@@ -35,7 +35,7 @@ declare namespace AsTypedInternal {
 
     type NumberSchema = SchemaDeclaration<number>& {
         multipleOf?: number
-        minimun?: number
+        minimum?: number
         exclusiveMinimum?: number
         maximum?: number
         exclusiveMaximum?: number
